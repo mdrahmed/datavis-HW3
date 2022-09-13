@@ -40,7 +40,40 @@ function update (data) {
   // const lineGenerator = d3.line()
   //   .x(d => the x coordinate for a point of the line)
   //   .y(d => the y coordinate for a point of the line);
-	updateLineChart(data);
+	//updateLineChart(data);
+	let svg = d3.select("#Linechart-div")
+                         .append("svg")
+                         //.attr("width",600)
+                         //.attr("height",275)
+                         //.attr("padding",10);
+                         .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
+                         .attr("height", CHART_HEIGHT + MARGIN.top + MARGIN.bottom);
+
+	console.log(svg.style("height"),svg.style("width"));
+        let g = svg.append("g")
+                        .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
+
+	d3.map(data,d => console.log("linear: ",d.date));	
+	let xScale = d3.scaleLinear()
+			//.domain([0,d3.map(data,function(d) {console.log(d.deaths); return d.date;})])
+			//.domain([0, d3.extent(data, d => d.date) ])
+			.domain([0,d3.map(data, d => d.date)])
+			.range([0,CHART_WIDTH]);
+	
+	let yScale = d3.scaleLinear()	
+			.domain([0,d3.max(data,d => d.deaths)])
+			.range([CHART_HEIGHT, 0]);
+
+
+	g.append("g")
+                //.attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + CHART_HEIGHT + ")")
+                .call(d3.axisBottom(xScale));
+        g.append("g")
+                //.attr("class", "axis axis--y")
+                .call(d3.axisLeft(yScale));
+
+
 
   // Syntax for area generator.
   // the area is bounded by upper and lower lines. So you can specify x0, x1, y0, y1 seperately. Here, since the area chart will have upper and lower sharing the x coordinates, we can just use x(). 
@@ -85,7 +118,7 @@ function updateBarChart (data) {
 	xScale.domain(data.map(function(d) {console.log(d.deaths); return d.date;}));
 	//let yValue = 0;
 	let y = d3.select("#metric").node().value;
-	console.log("y: ",y,"max: ",d3.max(data,function(d) {return d.y}));
+	console.log("y: ",y,"max: ",d3.max(data,function(d) { return d[y]}));
 	yScale.domain([0,d3.max(data,function(d) {return d.deaths;})]);
 	//yScale.domain([0,d3.max(data,function(d) {
 	//	//console.log(yValue); 
@@ -132,13 +165,15 @@ function updateLineChart (data) {
 	let g = svg.append("g")
                         .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 
-        let xScale = d3.scaleBand().rangeRound([0, CHART_WIDTH]).padding(0.1),
+        let xScale = d3.scaleLinear().rangeRound([0, CHART_WIDTH]).padding(0.1),
                 yScale = d3.scaleLinear().rangeRound([CHART_HEIGHT, 0]);
-	xScale.domain(data.map(function(d) {console.log(d.deaths); return d.date;}));
-        //let yValue = 0;
-        let y = d3.select("#metric").node().value;
+
+
+
+	xScale.domain(data.map(function(d) {console.log(d.deaths); return d.date;})).range([0,CHART_WIDTH]);
+        let y = d3.select("#metric").property("value");
         console.log("y: ",y,"max: ",d3.max(data,function(d) {return d.y}));
-        yScale.domain([0,d3.max(data,function(d) {return d.deaths;})]);
+        yScale.domain([0,d3.max(data,function(d) {return d.deaths;})]).range([CHART_HEIGHT,0]);
 
 	g.append("g")
                 //.attr("class", "axis axis--x")
@@ -148,15 +183,28 @@ function updateLineChart (data) {
                 //.attr("class", "axis axis--y")
                 .call(d3.axisLeft(yScale));
 	console.log("line");
-	let line = d3.line()
-    	.x(data.map(function(d) { console.log("date ",d.date); return xScale(d.date); }))
-    	.y(data.map(function(d) { console.log("deaths ",d.deaths); return yScale(d.deaths); }));
 
-	g.append("path")
-      		.datum(data)
-		.attr("d",line)
-		.attr("class", "line") // Assign a class for styling 
-    		.attr("d", line);
+	let line = svg.append('g')
+      			.append("path")
+        		.data(data)
+			.attr("class", "line-chart")
+        		.attr("d", d3.line()
+          			.x(function(d) { return xScale(d.date); })
+          			.y(function(d) { return yScale(d.deaths); })
+        		);
+			
+
+	//let line = d3.line()
+    	//	.x(d3.map(data,(function(d) { console.log("date ",d.date); return xScale(d.date); })))
+    	//	.y(d3.map(data,(function(d) { console.log("deaths ",d.deaths); return yScale(d.deaths); })));
+
+	//g.append("path")
+      	//	.data(data)
+	//	.attr("class", "line")  
+    	//	.attr("d", line);
+	//	//.attr("d",d3.line()
+	//	//	.x()
+	//	//)
 }
 
 /**
