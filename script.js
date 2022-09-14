@@ -3,7 +3,7 @@ const CHART_WIDTH = 500;
 const CHART_HEIGHT = 250;
 const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
 const ANIMATION_DUATION = 300;
-
+let randomData=0;
 setup();
 
 function setup () {
@@ -35,10 +35,45 @@ function remove_graphs(){
  */
 function update (data) {
 
+
+
+
+//       d3.select("#dataset").on("change",function (event){
+//                 // remove_graphs()
+//                 // setup()
+//                 // console.log("dataResult inside change: ",dataResult);
+//                 updateLineChart()
+//                 updateAreaChart()
+//                 updateBarChart()
+//                 updateScatterPlot()
+//         });
+
+//         d3.select("#metric").on("change",function (event){
+//                 console.log(d3.select("#metric").node().value);
+//                 // remove_graphs()
+//                 // setup()
+//                 updateLineChart()
+//                 updateAreaChart()
+//                 updateBarChart()
+//                 updateScatterPlot()
+//         })
+
+//         d3.select("#random").on("change",function (event){
+//                 // remove_graphs()
+//                 // setup()
+//                 console.log(d3.select("#random").node().value);
+//                 // update(randomSubset(dataResult));
+//                 updateLineChart()
+//                 updateAreaChart()
+//                 updateBarChart()
+//                 updateScatterPlot()
+//         })
+
   // ****** TODO ******
   console.log(data);
   //Experimenting on bar chart
 	// updateBarChart(data);
+
 
         this.svg_bar = d3.select("#Barchart-div")
         		.append("svg")
@@ -50,7 +85,7 @@ function update (data) {
 			.attr("id","bar-svg")
                 .append("g")
     			.attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")")
-    	console.log(this.svg_bar.style("height"),svg_bar.style("width"));	
+    	// console.log(this.svg_bar.style("height"),svg_bar.style("width"));	
 	// this.gBar = svg_bar.append("g")
     	// 		.attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")")
 	// 		.attr("id","bar-g");	
@@ -58,11 +93,11 @@ function update (data) {
     		yScaleBar = d3.scaleLinear().rangeRound([CHART_HEIGHT, 0]);	
 	
 	
-	xScaleBar.domain(data.map(function(d) {console.log(d.deaths); return d.date;}));
+	xScaleBar.domain(data.map(function(d) {return d.date;}));
 	//let yValue = 0;
-	let y = d3.select("#metric").node().value;
-	console.log("y: ",y,"max: ",d3.max(data,function(d) { return d[y]}));
-	yScaleBar.domain([0,d3.max(data,function(d) {return d[y];})]);
+	let yAxis = d3.select("#metric").node().value;
+	console.log("y: ",yAxis,"max: ",d3.max(data,function(d) { return d[yAxis]}));
+	yScaleBar.domain([0,d3.max(data,function(d) {return d[yAxis];})]);
 	//yScale.domain([0,d3.max(data,function(d) {
 	//	//console.log(yValue); 
 	//	//yValue+=20; 
@@ -86,12 +121,22 @@ function update (data) {
                 .data(data)
                 .enter().append("rect")
                 .attr("class","bar-chart")
+                // .attr("class","rect")
+                // .selectAll(".bar-chart.rect")
+                .on("mouseover",function() {
+                        d3.select(this)
+                                .attr("class","bar-chart-hovered")
+                })
+                .on("mouseout",function(){
+                        d3.select(this)
+                                .attr("class","bar-chart")
+                })
                 .attr("x", function(d) { return xScaleBar(d.date); })
-                .attr("y", function(d) {console.log("yscaleBar: ",yScaleBar(d.deaths)); return yScaleBar(d.deaths); })
+                .attr("y", function(d) { return yScaleBar(d[yAxis]); })
                 .attr("width", xScaleBar.bandwidth())
-                .attr("height", function(d) {return CHART_HEIGHT - yScaleBar(d.deaths)} );
+                .attr("height", function(d) {return CHART_HEIGHT - yScaleBar(d[yAxis])} );
         
-        console.log("height bar: ",this.bar.style("height"));
+        // console.log("height bar: ",this.bar.style("height"));
 
   // Syntax for line generator.
   // when updating the path for line chart, use the function as the input for 'd' attribute.
@@ -112,11 +157,11 @@ function update (data) {
                 .append("g")
                         .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 
-	console.log(svg_linear.style("height"),svg_linear.style("width"));
+	// console.log(svg_linear.style("height"),svg_linear.style("width"));
         // let g = svg_linear.append("g")
         //                 .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 
-	d3.map(data,d => console.log("linear: ",d.date));	
+	// d3.map(data,d => console.log("linear: ",d.date));	
 	let xScale = d3.scalePoint()
 			//.domain([0,d3.map(data,function(d) {console.log(d.deaths); return d.date;})])
 			//.domain([0, d3.extent(data, d => d.date) ])
@@ -144,8 +189,8 @@ function update (data) {
                         .attr("d", d3.line()
                                 //.x(data, d => console.log("x val: ", d.date); xScale(+d.date))
 				//.y(data, d => console.log("y val: ",d.deaths); yScale(+d.deaths))
-				.x(function(d) { console.log("x: ",d.date); return xScale(d.date); })
-                                .y(function(d) { console.log("y: ",d.deaths); return yScale(d.deaths); })
+				.x(function(d) {return xScale(d.date); })
+                                .y(function(d) { return yScale(d.deaths); })
                         );
 
 
@@ -168,7 +213,7 @@ function update (data) {
                          .append("g")
                         .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 
-        console.log(svg_area.style("height"),svg_area.style("width"));
+        // console.log(svg_area.style("height"),svg_area.style("width"));
         // let g_area = svg_area.append("g")
         //                 .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 
@@ -188,8 +233,8 @@ function update (data) {
                         .attr("d", d3.area()
                                 //.x(data, d => console.log("x val: ", d.date); xScale(+d.date))
                                 //.y(data, d => console.log("y val: ",d.deaths); yScale(+d.deaths))
-                                .x(function(d) { console.log("x: ",d.date); return xScale(d.date); })
-                                .y1(function(d) { console.log("y: ",d.deaths); return yScale(d.deaths); })
+                                .x(function(d) { return xScale(d.date); })
+                                .y1(function(d) { return yScale(d.deaths); })
 				.y0(CHART_HEIGHT)
                         );
 
@@ -238,7 +283,15 @@ function update (data) {
 			.append("circle")
 				.attr("class", "scatter-plot")
 				//.attr("class","hovered")
-					.attr("cx", function(d){ return xScatter(d.cases); })
+                                .on("mouseover",function() {
+                                        d3.select(this)
+                                                .attr("class","scatter-plot-hovered")
+                                })
+                                .on("mouseout",function(){
+                                        d3.select(this)
+                                                .attr("class","scatter-plot")
+                                })
+				.attr("cx", function(d){ return xScatter(d.cases); })
 				.attr("cy", function(d){ return yScatter(d.deaths); })
 				.attr("r", 3.5);	
 
@@ -251,20 +304,29 @@ function update (data) {
  */
 
 function updateBarChart () {
+
         const dataFile = d3.select('#dataset').property('value');
         console.log("dataFile for update",dataFile);
         d3.csv(`data/${dataFile}.csv`)
         .then(dataOutput => {
 
-        let dResult = dataOutput.map((d) => ({
+        dResult = dataOutput.map((d) => ({
                 cases: parseInt(d.cases),
                 deaths: parseInt(d.deaths),
                 date: d3.timeFormat("%m/%d")(d3.timeParse("%d-%b")(d.date))
         }));
+        if (document.getElementById('random').checked) {
+                // if random subset is selected
+                randomData = randomSubset(dResult);
+                dResult = randomData;
+        }
         // d3.csv(`data/${dataFile}.csv`)
         //  .then(
         // let dResult => dataOutput2(d);
         // console.log("dresult: ",dResult);
+
+
+	let yAxis = d3.select("#metric").node().value;
 
         let x = d3.scaleBand().rangeRound([0, CHART_WIDTH]).padding(0.1)
                 .domain(dResult.map(function(d) {return d.date;}));
@@ -272,7 +334,7 @@ function updateBarChart () {
                 //.domain([0,d3.map(data,function(d) {console.log(d.deaths); return d.date;})])
                 //.domain([0, d3.extent(data, d => d.date) ])
         let y = d3.scaleLinear().rangeRound([CHART_HEIGHT, 0])
-                .domain([0,d3.max(dResult,function(d) {return d.deaths;})]);
+                .domain([0,d3.max(dResult,function(d) {return d[yAxis];})]);
 
 
 
@@ -297,9 +359,9 @@ function updateBarChart () {
                    .duration(500)
                    .attr("class","bar-chart")
                    .attr("x", function(d) { return x(d.date); })
-                   .attr("y", function(d) {console.log("yscaleBar: ",y(d.deaths)); return y(d.deaths); })
+                   .attr("y", function(d) { return y(d[yAxis]); })
                    .attr("width", x.bandwidth())
-                   .attr("height", function(d) {return CHART_HEIGHT - y(d.deaths)} );
+                   .attr("height", function(d) {return CHART_HEIGHT - y(d[yAxis])} );
            
                 })
 
@@ -314,15 +376,21 @@ function updateLineChart () {
         d3.csv(`data/${dataFile}.csv`)
         .then(dataOutput => {
 
-        let dResult = dataOutput.map((d) => ({
+        dResult = dataOutput.map((d) => ({
                 cases: parseInt(d.cases),
                 deaths: parseInt(d.deaths),
                 date: d3.timeFormat("%m/%d")(d3.timeParse("%d-%b")(d.date))
         }));
-        // d3.csv(`data/${dataFile}.csv`)
-        //  .then(
-        // let dResult => dataOutput2(d);
+        if (document.getElementById('random').checked) {
+                // if random subset is selected
+                // dResult = randomSubset(dResult);
+                dResult = randomData;
+        }
+        
         console.log("dresult: ",dResult);
+
+
+	let yAxis = d3.select("#metric").node().value;
 
         let x = d3.scalePoint()
                 .domain(d3.map(dResult, d => d.date))
@@ -332,7 +400,7 @@ function updateLineChart () {
                             
     
         let y = d3.scaleLinear()
-                .domain([0,d3.max(dResult,d => d.deaths)])
+                .domain([0,d3.max(dResult,d => d[yAxis])])
                 .range([CHART_HEIGHT, 0]);
 
         this.svg_linear.selectAll("g.x.axis")
@@ -349,8 +417,8 @@ function updateLineChart () {
             .transition()
             .duration(1000)
             .attr("d", d3.line()
-                        .x(function(d) { console.log("x: ",d.date); return x(d.date); })
-                        .y(function(d) { console.log("y: ",d.deaths); return y(d.deaths); })
+                        .x(function(d) { return x(d.date); })
+                        .y(function(d) { return y(d[yAxis]); })
                 )
         //     .attr("stroke", function(d){ return myColor(selectedGroup) })
 
@@ -367,15 +435,23 @@ function updateAreaChart () {
         d3.csv(`data/${dataFile}.csv`)
         .then(dataOutput => {
 
-        let dResult = dataOutput.map((d) => ({
+        dResult = dataOutput.map((d) => ({
                 cases: parseInt(d.cases),
                 deaths: parseInt(d.deaths),
                 date: d3.timeFormat("%m/%d")(d3.timeParse("%d-%b")(d.date))
         }));
+        if (document.getElementById('random').checked) {
+                // if random subset is selected
+                // dResult = randomSubset(dResult);
+                dResult = randomData;
+        }
         // d3.csv(`data/${dataFile}.csv`)
         //  .then(
         // let dResult => dataOutput2(d);
         console.log("dresult: ",dResult);
+
+
+	let yAxis = d3.select("#metric").node().value;
 
         let x = d3.scalePoint()
                 .domain(d3.map(dResult, d => d.date))
@@ -385,7 +461,7 @@ function updateAreaChart () {
                             
     
         let y = d3.scaleLinear()
-                .domain([0,d3.max(dResult,d => d.deaths)])
+                .domain([0,d3.max(dResult,d => d[yAxis])])
                 .range([CHART_HEIGHT, 0]);
 
         this.svg_area.selectAll("g.x.axis")
@@ -399,14 +475,6 @@ function updateAreaChart () {
         
 
         this.area
-        //     .datum(dResult)
-        //     .transition()
-        //     .duration(1000)
-        //     .attr("d", d3.line()
-        //                 .x(function(d) { console.log("x: ",d.date); return x(d.date); })
-        //                 .y(function(d) { console.log("y: ",d.deaths); return y(d.deaths); })
-        //         )
-        //         .append("path")
                 .datum(dResult)
                 .transition()
                 .duration(1000)
@@ -414,8 +482,8 @@ function updateAreaChart () {
                 .attr("d", d3.area()
                         //.x(data, d => console.log("x val: ", d.date); xScale(+d.date))
                         //.y(data, d => console.log("y val: ",d.deaths); yScale(+d.deaths))
-                        .x(function(d) { console.log("x: ",d.date); return x(d.date); })
-                        .y1(function(d) { console.log("y: ",d.deaths); return y(d.deaths); })
+                        .x(function(d) { return x(d.date); })
+                        .y1(function(d) {return y(d[yAxis]); })
 			.y0(CHART_HEIGHT)
                 );
         //     .attr("stroke", function(d){ return myColor(selectedGroup) })
@@ -433,11 +501,16 @@ function updateScatterPlot () {
         d3.csv(`data/${dataFile}.csv`)
         .then(dataOutput => {
 
-        let dResult = dataOutput.map((d) => ({
+        dResult = dataOutput.map((d) => ({
                 cases: parseInt(d.cases),
                 deaths: parseInt(d.deaths),
                 date: d3.timeFormat("%m/%d")(d3.timeParse("%d-%b")(d.date))
         }));
+        if (document.getElementById('random').checked) {
+                // if random subset is selected
+                // dResult = randomSubset(dResult);
+                dResult = randomData;
+        }
         // d3.csv(`data/${dataFile}.csv`)
         //  .then(
         // let dResult => dataOutput2(d);
@@ -461,21 +534,6 @@ function updateScatterPlot () {
                 .duration(500)
                 .call(d3.axisLeft(y));
 
-
-                // this.bar = this.svg_bar.selectAll("g.rect_g").selectAll(".bar-chart").remove()
-                // this.bar = this.svg_bar
-                //    // .append("g").attr("class","rect_g")
-                //    .selectAll("g.rect_g")
-                //    .selectAll("rect")
-                //    .data(dResult)
-                //    .enter().append("rect")
-                //    .transition()
-                //    .duration(500)
-                //    .attr("class","bar-chart")
-                //    .attr("x", function(d) { return x(d.date); })
-                //    .attr("y", function(d) {console.log("yscaleBar: ",y(d.deaths)); return y(d.deaths); })
-                //    .attr("width", x.bandwidth())
-                //    .attr("height", function(d) {return CHART_HEIGHT - y(d.deaths)} );
         
         this.scatter = this.svg_scatter.selectAll("g.circle_g").selectAll(".scatter-plot").remove()
         this.scatter = this.svg_scatter
@@ -531,6 +589,11 @@ function changeData () {
       } else {
         update(dataResult);
       }
+
+
+
+
+
     }).catch(e => {
       console.log(e);
       alert('Error!');
@@ -540,20 +603,31 @@ function changeData () {
 	d3.select("#dataset").on("change",function (event){
 		// remove_graphs()
 		// setup()
+                updateBarChart()
                 updateLineChart()
                 updateAreaChart()
-                updateBarChart()
                 updateScatterPlot()
 	});
 
 	d3.select("#metric").on("change",function (event){
-                remove_graphs()
-                setup()
+                console.log(d3.select("#metric").node().value);
+                // remove_graphs()
+                // setup()
+                updateBarChart()
+                updateLineChart()
+                updateAreaChart()
+                updateScatterPlot()
         })
 
 	d3.select("#random").on("change",function (event){
-                remove_graphs()
-                setup()
+                // remove_graphs()
+                // setup()
+                console.log(d3.select("#random").node().value);
+                // update(randomSubset(dataResult));
+                updateBarChart()
+                updateLineChart()
+                updateAreaChart()
+                updateScatterPlot()
         })
 }
 
