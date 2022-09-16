@@ -22,14 +22,21 @@
 <!--
 -->
     /* style of bar charts */
-    .bar-chart{
+    .bar-chart rect{
       fill: rgb(79, 175, 211);
     }
 
-    .bar-chart-hovered {
+    .bar-chart .hovered {
       fill: #979696;
     }
 
+    .b rect{
+      fill: rgb(79, 175, 211);
+    }
+
+    .b .hovered{
+      fill: #979696;
+    }
 
     /* style of line charts */
     .line-chart {
@@ -48,11 +55,11 @@
     }
 
     /* style of scatter plot */
-    .scatter-plot{
+    .scatter-plot circle{
       fill: rgb(79, 175, 211);
     }
 
-    .scatter-plot-hovered {
+    .scatter-plot .hovered {
       fill: #979696;
     }
   </style>
@@ -119,8 +126,19 @@
       <h2>Scatterplot</h2>
       <div id="Scatterplot-div"></div>
     </div>
+
+
+    <div class="chart">
+      <h2>test</h2>
+      <div id="test"></div>
+    </div>
   </div>
 
+
+  <!-- <div><svg width="570" height="290">
+      <rect id="abc" width="300" height="100" class="bar-chart rect" />
+    </svg>
+  </div> -->
 
 </body>
 <script src="script.js"></script>

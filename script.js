@@ -22,12 +22,12 @@ function setup () {
 }
 
 
-function remove_graphs(){
-	this.svg_linear.remove();
-	this.svg_bar.remove();
-	this.svg_area.remove();
-	this.svg_scatter.remove();
-}
+// function remove_graphs(){
+// 	this.svg_linear.remove();
+// 	this.svg_bar.remove();
+// 	this.svg_area.remove();
+// 	this.svg_scatter.remove();
+// }
 
 /**
  * Render the visualizations
@@ -36,43 +36,25 @@ function remove_graphs(){
 function update (data) {
 
 
-
-
-//       d3.select("#dataset").on("change",function (event){
-//                 // remove_graphs()
-//                 // setup()
-//                 // console.log("dataResult inside change: ",dataResult);
-//                 updateLineChart()
-//                 updateAreaChart()
-//                 updateBarChart()
-//                 updateScatterPlot()
-//         });
-
-//         d3.select("#metric").on("change",function (event){
-//                 console.log(d3.select("#metric").node().value);
-//                 // remove_graphs()
-//                 // setup()
-//                 updateLineChart()
-//                 updateAreaChart()
-//                 updateBarChart()
-//                 updateScatterPlot()
-//         })
-
-//         d3.select("#random").on("change",function (event){
-//                 // remove_graphs()
-//                 // setup()
-//                 console.log(d3.select("#random").node().value);
-//                 // update(randomSubset(dataResult));
-//                 updateLineChart()
-//                 updateAreaChart()
-//                 updateBarChart()
-//                 updateScatterPlot()
-//         })
-
   // ****** TODO ******
   console.log(data);
   //Experimenting on bar chart
 	// updateBarChart(data);
+
+        // test
+        // this.test = d3.select("#test")
+        //                 .append("svg")
+        //                 .attr("width", CHART_WIDTH + MARGIN.left + MARGIN.right)
+    	// 		.attr("height", CHART_HEIGHT + MARGIN.top + MARGIN.bottom)
+	// 		.attr("id","test") 
+        // let test_g = this.test.append("g")
+        //                 .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")")        
+        // test_g.append("g").attr("class","b")
+        //                 .append("rect")
+        //                 .attr('x', 10)
+        //                 .attr('y', 10)
+        //                 .attr('width', 600)
+        //                 .attr('height', 40)
 
 
         this.svg_bar = d3.select("#Barchart-div")
@@ -117,20 +99,25 @@ function update (data) {
 	
 	this.bar = this.svg_bar
                 .append("g").attr("class","rect_g")
+                // .append("g").attr("class","bar-chart")
                 .selectAll("rect")
                 .data(data)
-                .enter().append("rect")
-                .attr("class","bar-chart")
+                .enter()
+                .append("g").attr("class","bar-chart")
+                .append("rect")
+                // .attr("class","bar-chart")
                 // .attr("class","rect")
                 // .selectAll(".bar-chart.rect")
                 .on("mouseover",function() {
                         d3.select(this)
-                                .attr("class","bar-chart-hovered")
+                                .attr("class","hovered")
                 })
                 .on("mouseout",function(){
                         d3.select(this)
-                                .attr("class","bar-chart")
+                                .attr("class","b")
                 })
+                .transition()
+                .duration(1000)
                 .attr("x", function(d) { return xScaleBar(d.date); })
                 .attr("y", function(d) { return yScaleBar(d[yAxis]); })
                 .attr("width", xScaleBar.bandwidth())
@@ -280,12 +267,13 @@ function update (data) {
                         //.attr("class", "scatter-plot")
 			//.classed('scatter-plot',true)
 			.enter()
+                        .append("g").attr("class","scatter-plot")
 			.append("circle")
-				.attr("class", "scatter-plot")
+				// .attr("class", "scatter-plot")
 				//.attr("class","hovered")
                                 .on("mouseover",function() {
                                         d3.select(this)
-                                                .attr("class","scatter-plot-hovered")
+                                                .attr("class","hovered")
                                 })
                                 .on("mouseout",function(){
                                         d3.select(this)
@@ -293,7 +281,7 @@ function update (data) {
                                 })
 				.attr("cx", function(d){ return xScatter(d.cases); })
 				.attr("cy", function(d){ return yScatter(d.deaths); })
-				.attr("r", 3.5);	
+				.attr("r", 7);	
 
   //TODO 
   // call each update function below, adjust the input for the functions if you need to.
@@ -354,10 +342,20 @@ function updateBarChart () {
                    .selectAll("g.rect_g")
                    .selectAll("rect")
                    .data(dResult)
-                   .enter().append("rect")
+                   .enter()
+                   .append("g").attr("class","bar-chart")
+                   .append("rect")
+                   .on("mouseover",function() {
+                        d3.select(this)
+                                .attr("class","hovered")
+                   })
+                  .on("mouseout",function(){
+                        d3.select(this)
+                                .attr("class","b")
+                  })
                    .transition()
-                   .duration(500)
-                   .attr("class","bar-chart")
+                   .duration(2000)
+                //    .attr("class","bar-chart")
                    .attr("x", function(d) { return x(d.date); })
                    .attr("y", function(d) { return y(d[yAxis]); })
                    .attr("width", x.bandwidth())
@@ -543,14 +541,23 @@ function updateScatterPlot () {
                 //.attr("class", "scatter-plot")
                 //.classed('scatter-plot',true)
                 .enter()
+                        .append("g").attr("class","scatter-plot")
                         .append("circle")
-                        .attr("class", "scatter-plot")
+                        // .attr("class", "scatter-plot")
+                        .on("mouseover",function() {
+                                d3.select(this)
+                                        .attr("class","hovered")
+                        })
+                        .on("mouseout",function(){
+                                d3.select(this)
+                                        .attr("class","scatter-plot")
+                        })
                         .transition()
-                        .duration(1000)
+                        .duration(1500)
                         //.attr("class","hovered")
                         .attr("cx", function(d){ return x(d.cases); })
                         .attr("cy", function(d){ return y(d.deaths); })
-                        .attr("r", 3.5);
+                        .attr("r", 7);
 
         })
 }
@@ -563,6 +570,7 @@ function changeData () {
   //  Load the file indicated by the select menu
   const dataFile = d3.select('#dataset').property('value');
   console.log("dataFile ",dataFile);
+  
   d3.csv(`data/${dataFile}.csv`)
     .then(dataOutput => {
 
