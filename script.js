@@ -116,6 +116,7 @@ function update (data) {
                         d3.select(this)
                                 .attr("class","b")
                 })
+        // this.svg_bar.selectAll("rect")
                 .transition()
                 .duration(1000)
                 .attr("x", function(d) { return xScaleBar(d.date); })
@@ -156,7 +157,7 @@ function update (data) {
 			.range([0,CHART_WIDTH]);
 	
 	let yScale = d3.scaleLinear()	
-			.domain([0,d3.max(data,d => d.deaths)])
+			.domain([0,d3.max(data,d => d[yAxis])])
 			.range([CHART_HEIGHT, 0]);
 
 
@@ -177,7 +178,7 @@ function update (data) {
                                 //.x(data, d => console.log("x val: ", d.date); xScale(+d.date))
 				//.y(data, d => console.log("y val: ",d.deaths); yScale(+d.deaths))
 				.x(function(d) {return xScale(d.date); })
-                                .y(function(d) { return yScale(d.deaths); })
+                                .y(function(d) { return yScale(d[yAxis]); })
                         );
 
 
@@ -221,7 +222,7 @@ function update (data) {
                                 //.x(data, d => console.log("x val: ", d.date); xScale(+d.date))
                                 //.y(data, d => console.log("y val: ",d.deaths); yScale(+d.deaths))
                                 .x(function(d) { return xScale(d.date); })
-                                .y1(function(d) { return yScale(d.deaths); })
+                                .y1(function(d) { return yScale(d[yAxis]); })
 				.y0(CHART_HEIGHT)
                         );
 
@@ -336,8 +337,8 @@ function updateBarChart () {
                 .call(d3.axisLeft(y));
 
 
-                this.bar = this.svg_bar.selectAll("g.rect_g").selectAll(".bar-chart").remove()
-                this.bar = this.svg_bar
+        this.bar = this.svg_bar.selectAll("g.rect_g").selectAll(".bar-chart").remove()
+        this.bar = this.svg_bar
                    // .append("g").attr("class","rect_g")
                    .selectAll("g.rect_g")
                    .selectAll("rect")
