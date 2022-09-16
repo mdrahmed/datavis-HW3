@@ -114,7 +114,7 @@ function update (data) {
                 })
                 .on("mouseout",function(){
                         d3.select(this)
-                                .attr("class","b")
+                                .attr("class","bar-chart")
                 })
         // this.svg_bar.selectAll("rect")
                 .transition()
@@ -241,7 +241,7 @@ function update (data) {
                          .attr("height", CHART_HEIGHT + MARGIN.top + MARGIN.bottom)
                 .append("g")
                          .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
-
+        console.log("scatter data: ",data);
 	// let g_scatter = svg_scatter.append("g")
         //                 .attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
 	
@@ -280,6 +280,10 @@ function update (data) {
                                         d3.select(this)
                                                 .attr("class","scatter-plot")
                                 })
+                                .on("click",function(e,datum){
+                                        console.log("Cases: ",datum.cases,"Deaths: ",datum.deaths);
+
+                                })
 				.attr("cx", function(d){ return xScatter(d.cases); })
 				.attr("cy", function(d){ return yScatter(d.deaths); })
 				.attr("r", 7);	
@@ -309,6 +313,7 @@ function updateBarChart () {
                 randomData = randomSubset(dResult);
                 dResult = randomData;
         }
+        console.log("Bar random data: ",dResult);
         // d3.csv(`data/${dataFile}.csv`)
         //  .then(
         // let dResult => dataOutput2(d);
@@ -352,7 +357,7 @@ function updateBarChart () {
                    })
                   .on("mouseout",function(){
                         d3.select(this)
-                                .attr("class","b")
+                                .attr("class","bar-chart")
                   })
                    .transition()
                    .duration(2000)
@@ -510,6 +515,7 @@ function updateScatterPlot () {
                 // dResult = randomSubset(dResult);
                 dResult = randomData;
         }
+        console.log("scatter random data: ",dResult);
         // d3.csv(`data/${dataFile}.csv`)
         //  .then(
         // let dResult => dataOutput2(d);
@@ -553,6 +559,10 @@ function updateScatterPlot () {
                                 d3.select(this)
                                         .attr("class","scatter-plot")
                         })
+                        .on("click",function(e,datum){
+                                console.log("Cases: ",datum.cases,"Deaths: ",datum.deaths);
+
+                        })
                         .transition()
                         .duration(1500)
                         //.attr("class","hovered")
@@ -592,13 +602,13 @@ function changeData () {
         deaths: parseInt(d.deaths),
         date: d3.timeFormat("%m/%d")(d3.timeParse("%d-%b")(d.date))
       }));
-      if (document.getElementById('random').checked) {
-        // if random subset is selected
-        update(randomSubset(dataResult));
-      } else {
-        update(dataResult);
-      }
-
+//       if (document.getElementById('random').checked) {
+//         // if random subset is selected
+//         update(randomSubset(dataResult));
+//       } else {
+//         update(dataResult);
+//       }
+      update(dataResult);
 
 
 
